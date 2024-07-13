@@ -861,3 +861,86 @@ paths:
                     type: string
                     example: Something went wrong, please try again later
                     
+/api/subscribe/{plan_id}:
+    post:
+      tags:
+        - Subscription
+      security:
+       - bearerAuth: []
+      parameters:
+       - in: path
+         name: plan_id 
+         required: true
+         description: ID of the subscription plan to subscribe to.
+         schema:
+           type: string
+      summary: Subscribe to a plan
+      description: Users can subscribe to a plan already created by admin
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Subscribed successfully
+        '404':
+          description: Plan not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Subscription plan not found
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Something went wrong, please try again later
+                    
+  /api/notifications:
+    get:
+      tags:
+        - Notification
+      summary: Get user notifications
+      description: Returns all notifications for a user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Fetched notifications successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message: 
+                          type: string
+                        date:
+                          type: string
+      
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
