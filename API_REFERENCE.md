@@ -1,4 +1,4 @@
-# HNG Stage 3 Endpoint Definition
+# HNG Stage 3 Endpoint Definitions
 
 ## Overview
 
