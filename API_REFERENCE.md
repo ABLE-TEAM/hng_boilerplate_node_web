@@ -1,8 +1,8 @@
-# HNG Stage 2 Endpoint Definition
+# HNG Stage 3 Endpoint Definition
 
 ## Overview
 
-API endpoints for stage 2 task
+API endpoints for stage 3 task
 
 ## Base URL
 
@@ -108,6 +108,46 @@ API endpoints for stage 2 task
 {
   "status": false,
   "message": "Invalid credentials provided"
+}
+```
+
+### Logout 
+#### Log a user out of the app
+
+- **Endpoint:** `/auth/logout`
+- **Method:** `POST`
+- **Description:** Logs a user out
+
+**Success Response:**
+
+- **Code:** 200
+- **Content:**
+
+```json
+{
+  "status": true,
+  "message": "User logged out successfully"
+}
+```
+
+**Error Responses:**
+
+- **Code:** 422
+- **Content:**
+
+```json
+{
+  "status": false,
+  "message": "Invalid request"
+}
+```
+- **Code:** 401
+- **Content:**
+
+```json
+{
+  "status": false,
+  "message": "Unauthorized access"
 }
 ```
 

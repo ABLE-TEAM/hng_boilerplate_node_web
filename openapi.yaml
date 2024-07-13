@@ -121,6 +121,44 @@ paths:
                     type: string
                     example: Invalid credential provided
   
+  /auth/logout:
+  post:
+    tags:
+      - Authentication
+    summary: Logs a user out
+    responses:
+      '200':
+        description: Success
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User logged out successfully
+      '422':
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Invalid request
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Unauthorized access
+
+
   /api/change-password:
     post:
       tags:
