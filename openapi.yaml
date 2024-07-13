@@ -1,0 +1,946 @@
+openapi: 3.1.0
+info:
+  title: HNG Stage 3 endpoint definition
+  description: API endpoints for stage 3 task
+  version: 1.0.0
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Create an account for a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  example: Garfield
+                last_name:
+                  type: string
+                  example: Shenko
+                email:
+                  type: string
+                  example: garfield.shenko@gmail.com
+                password:
+                  type: string
+                  example: 12345
+                phone:
+                  type: string
+                  example: 07060470281
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+        '422':
+          description: User is missing one or more required fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: First name is required
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account with the provided email already exists
+        
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Logs a registered user in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: garfield.skuk@gmail.com
+                password:
+                  type: string
+                  example: 12345
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  message:
+                    type: string
+        '422':
+          description: Missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: One or more required fields missing
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid credential provided
+  
+  /api/change-password:
+    post:
+      tags:
+        - Account management
+      summary: Updates a logged in user's password
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                new_password:
+                  type: string
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password changed successfully
+        '422':
+          description: Incorrect password entered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Incorrect password entered
+  
+  /api/profile:
+    get:
+      tags:
+        - Account management
+      summary: User profile
+      security:
+        - bearerAuth: []
+      description: This endpoint returns the details of the currently logged in user
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      email:
+                        type: string
+                      address:
+                        type: string
+                      phone:
+                        type: string
+    
+    patch:
+      tags:
+        - Account management
+      summary: Update user account
+      security:
+        - bearerAuth: []
+      description: Update user details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                address:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          description: Empty data sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    
+    delete:
+      tags:
+        - Account management
+      summary: Delete account
+      description: Deletes a user's account but keeps it for a number of days for revival
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account deleted successfully
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Something went wrong, please try again later
+        
+  /api/organisation:
+    post:
+      tags:
+        - Organisation
+      summary: Create organisation
+      security:
+       - bearerAuth: []
+      description: Creates a new organisation for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Golf lovers
+                description:
+                  type: string
+                  example: Association for lovers of golf game
+              required:
+                - name
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Organisation created successfully
+        '422':
+          description: Missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Name is required to create an organisation
+  
+    get:
+      tags:
+        - Organisation
+      summary: Get all user's organisations
+      security:
+        - bearerAuth: []
+      parameters:
+         - in: query
+           name: creator
+           schema:
+             type: boolean
+           description: Returns only organisations a user created if true, only organisations where user is a member if false, all organisations if not specified.
+      description: Return all organisations a user is part of including both those the user created and others
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Fetched organisation successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: Impala golden
+                        description:
+                          type: string
+                          example: Resurrecting faith in mankind
+                        creator:
+                          type: boolean
+                          example: false
+
+    patch:
+      tags:
+        - Organisation
+      security:
+        - bearerAuth: []
+      summary: Update organisation details
+      description: Update details of an organisation a user created
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Organisation details updated successfully
+        '422':
+          description: Missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Enter fields to update
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Something went wrong, please try again later
+    delete:
+      tags:
+        - Organisation
+      summary: Delete organisation
+      description: User can only delete organisations they created [NOTE All organistation details will be lost]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Organisation deleted successfully
+        '403':
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User can only delete organisations they created
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Organisation not found
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Something went wrong, please try again later
+  
+  /api/organisation/{org_id}/users:
+    post:
+      tags:
+        - Organisation
+      summary: Adds user to organisation
+      security:
+       - bearerAuth: []
+      description: A user can only add other users to an organisation they created
+      parameters:
+        - in: path
+          name: org_id
+          required: true
+          schema:
+            type: string
+          description: The organisation to add a new user to
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+              required:
+                - user_id
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User added to organisation successfully
+        '422':
+          description: Missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User_id is required to add user to an organisation
+        '403':
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: You can only add users to organisation you created.
+        '404':
+          description: User or Organisation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User is already a member of this organisation
+    
+    patch:
+      tags:
+        - Organisation
+      summary: Remove a user from organisation
+      security:
+        - bearerAuth: []
+      description: A user can only remove other users from organisation they created.
+      parameters:
+        - in: path
+          name: org_id
+          required: true
+          schema:
+            type: string
+          description: The organisation to remove the user from
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+              required:
+                - user_id
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User removed from organisation successfully
+        '422':
+          description: Missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User_id is required to remove user from an organisation
+        '403':
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: You can only remove users from organisation you created.
+        '404':
+          description: User or Organisation not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User is not a member of this organisation
+  
+  /api/users/{id}:
+    get:
+      tags:
+        - Organisation
+      summary: Get a user in your organisation
+      security:
+        - bearerAuth: []
+      parameters:
+         - in: path
+           name: id
+           required: true
+           schema:
+             type: string
+           description: User ID of user to return
+      description: Returns the proifile the user 
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Fetched user successfully
+                  data:
+                    type: object
+                    properties:
+                      first_name:
+                        type: string
+                        example: Impala
+                      last_name:
+                        type: string
+                        example: Golden
+                      phone:
+                        type: string
+                        example: 1234567
+                      email:
+                        type: string
+                        example: impala.golden@gmail.com
+        '403':
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: You can only get users in organisations you created.
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+        
+  /api/subcription:
+    get:
+      tags:
+        - Subscription
+      summary: Get all subscriptions
+      description: Returns all subscriptions
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Fetched subscriptions successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: Basic
+                        price:
+                          type: integer
+                          example: 10
+                          
+    post: 
+      tags:
+        - Subscription
+      security:
+        - bearerAuth: []
+      summary: Add a new subscription plan
+      description: SuperAdmnin create a new subscription plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Basic
+                price:
+                  type: integer
+                  example: 5
+              required:
+                - name
+                - price
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Plan created successfully
+        '403':
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Only an admin can create a subscription plan.
+        '422':
+          description: Missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Name and price are required to create a new plan      
+                    
+  /api/subscription/{id}:
+    patch:
+      tags:
+        - Subscription
+      summary: Update a subscription plan
+      security:
+        - bearerAuth: []
+      description: Admin update a plan they have created before
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The subscription plan ID to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                price:
+                  type: integer
+                  example: 10
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Plan updated successfully
+        '422':
+          description: Missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Enter name or price to update plan.
+        '403':
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: You do not have access this function.
+        '404':
+          description: Plan not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Subscription plan not found
+    delete:
+      tags:
+        - Subscription
+      summary: Delete subscription plan
+      description: Deletes subscription plan
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The subscription plan ID to delete
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Plan deleted successfully
+        '403':
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: You do not have access this function.
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Something went wrong, please try again later
+                    
+  /api/subscribe/{plan_id}:
+    post:
+      tags:
+        - Subscription
+      security:
+       - bearerAuth: []
+      parameters:
+       - in: path
+         name: plan_id 
+         required: true
+         description: ID of the subscription plan to subscribe to.
+         schema:
+           type: string
+      summary: Subscribe to a plan
+      description: Users can subscribe to a plan already created by admin
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Subscribed successfully
+        '404':
+          description: Plan not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Subscription plan not found
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Something went wrong, please try again later
+                    
+  /api/notifications:
+    get:
+      tags:
+        - Notification
+      summary: Get user notifications
+      description: Returns all notifications for a user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Fetched notifications successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message: 
+                          type: string
+                        date:
+                          type: string
+      
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
