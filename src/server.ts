@@ -7,7 +7,7 @@ import path from 'path';
 const app = express();
 const port = 3000;
 
-const file = fs.readFileSync(path.join(__dirname, "openapi.yaml"), "utf8");
+const file = fs.readFileSync(path.join(__dirname, "../openapi.yaml"), "utf8");
 const swaggerDocument = YAML.parse(file);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
