@@ -132,24 +132,16 @@ API endpoints for stage 3 task
 
 **Error Responses:**
 
-- **Code:** 422
+- **Code:** 500
 - **Content:**
 
 ```json
 {
   "status": false,
-  "message": "Invalid request"
+  "message": "Internal server error"
 }
 ```
-- **Code:** 401
-- **Content:**
 
-```json
-{
-  "status": false,
-  "message": "Unauthorized access"
-}
-```
 
 ### Change password
 

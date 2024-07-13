@@ -137,8 +137,8 @@ paths:
                 message:
                   type: string
                   example: User logged out successfully
-      '422':
-        description: Bad Request
+      '500':
+        description: An unexpected error occurred on the server
         content:
           application/json:
             schema:
@@ -146,17 +146,7 @@ paths:
               properties:
                 message:
                   type: string
-                  example: Invalid request
-      '401':
-        description: Unauthorized
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                message:
-                  type: string
-                  example: Unauthorized access
+                  example:  Internal Server Error
 
 
   /api/change-password:
