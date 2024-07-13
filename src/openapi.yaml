@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: HNG Stage 3 endpoint definition
-  description: API endpoints for stage 2 task
+  description: API endpoints for stage 3 task
   version: 1.0.0
 
 paths:
