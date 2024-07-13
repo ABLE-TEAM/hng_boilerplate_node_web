@@ -601,7 +601,7 @@ paths:
                     type: string
                     example: User is not a member of this organisation
   
-/api/users/{id}:
+  /api/users/{id}:
     get:
       tags:
         - Organisation
@@ -861,7 +861,7 @@ paths:
                     type: string
                     example: Something went wrong, please try again later
                     
-/api/subscribe/{plan_id}:
+  /api/subscribe/{plan_id}:
     post:
       tags:
         - Subscription
